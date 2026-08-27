@@ -1,0 +1,10 @@
+# Ignore local database files
+*.db
+*.sqlite3
+
+# Ignore Bundler cache and downloaded gems
+/.bundle/
+/vendor/bundle/
+
+# Ignore log files
+*.log
