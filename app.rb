@@ -240,3 +240,37 @@ class FinanceEngine
     "Error: #{e.message}"
   end
 end
+
+# Server Routing and Asset Delivery Configuration
+set :bind, '127.0.0.1'
+set :port, 4567
+set :public_folder, File.join(__dir__, 'public')
+
+# Serve single page chat application
+get '/' do
+  send_file File.join(settings.public_folder, 'index.html')
+end
+
+# Primary conversational API route handling asynchronous JSON requests
+post '/api/chat' do
+  # Declare response payload format as application json
+  content_type :json
+
+  # Read and parse client request stream safely
+  payload = JSON.parse(request.body.read) rescue {}
+
+  # Forward query string to engine and return serialized JSON response
+  { reply: FinanceEngine.process(payload['query']) }.to_json
+end
+
+# Administrative audit log endpoint providing conversational history
+get '/api/audit' do
+  # Declare response payload format as application json
+  content_type :json
+
+  # Retrieve recent interaction logs ordered by newest record first
+  logs = DB.execute('SELECT id, query, reply, created_at FROM chat_logs ORDER BY id DESC LIMIT 20')
+
+  # Serialize row array into JSON format
+  logs.to_json
+end
