@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PFCB - Personal Finance Chatbot</title>
+  <style>
+    /* Base typography and layout reset using Calibri */
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: Calibri, 'Segoe UI', Arial, sans-serif; }
+    body { background: #ffffff; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+
+    /* Minimalist white card with a clean single black border */
+    .card { width: 100%; max-width: 620px; height: 80vh; background: #ffffff; border: 1px solid #000000; display: flex; flex-direction: column; }
+    header { padding: 14px 16px; font-weight: bold; font-size: 1rem; border-bottom: 1px solid #000000; }
+
+    /* Scrollable chat viewport */
+    #chat-box { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background: #ffffff; }
+
+    /* Clean message bubbles preserving newline spacing */
+    .msg { max-width: 80%; padding: 10px 14px; font-size: 0.95rem; line-height: 1.4; border-radius: 4px; white-space: pre-line; }
+    .bot { background: #f2f2f2; color: #000000; align-self: flex-start; }
+    .user { background: #000000; color: #ffffff; align-self: flex-end; }
+
+    /* Bottom input bar bounded by black border */
+    form { display: flex; border-top: 1px solid #000000; }
+    input { flex: 1; padding: 12px 14px; border: none; outline: none; font-size: 0.95rem; font-family: inherit; }
+    button { padding: 12px 22px; background: #000000; color: #ffffff; border: none; cursor: pointer; font-size: 0.95rem; font-family: inherit; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <header>PFCB - Personal Finance Assistant</header>
+    <div id="chat-box">
+      <div class="msg bot">Hello! I am your Personal Finance Assistant
+
+Type 'menu' to see all commands and categories</div>
+    </div>
+    <form id="chat-form">
+      <input type="text" id="query" placeholder="Type a command..." required autocomplete="off">
+      <button type="submit">Send</button>
+    </form>
+  </div>
+
+  <script>
+    // Cache DOM references for message manipulation
+    const form = document.getElementById('chat-form');
+    const box = document.getElementById('chat-box');
+    const input = document.getElementById('query');
+
+    // Create and append dynamic message elements
+    function append(text, sender) {
+      const el = document.createElement('div');
+      el.className = `msg ${sender}`;
+      
+      // Use textContent to prevent script injection vulnerabilities
+      el.textContent = text;
+      box.appendChild(el);
+      
+      // Auto scroll container to reveal latest message
+      box.scrollTop = box.scrollHeight;
+    }
+
+    // Capture submit event to handle conversational requests asynchronously
+    form.onsubmit = async (e) => {
+      // Prevent standard browser page reload
+      e.preventDefault();
+      
+      // Strip whitespace and reject empty submissions
+      const val = input.value.trim();
+      if (!val) return;
+      
+      // Render user bubble and clear input control
+      append(val, 'user');
+      input.value = '';
+
+      // Post JSON query payload to Sinatra endpoint
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: val })
+      });
+      
+      // Parse serialized JSON response and append bot message
+      const data = await res.json();
+      append(data.reply, 'bot');
+    };
+  </script>
+</body>
+</html>
