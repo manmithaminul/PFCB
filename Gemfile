@@ -14,3 +14,4 @@ group :test do
   gem 'minitest', '~> 5.20'
   gem 'rack-test', '~> 2.1'
 end
+gem "rackup", "~> 2.3"
