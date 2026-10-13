@@ -1,3 +1,4 @@
+# 10695320 - Minul Manmitha
 # PFCB - Personal Finance Chat Bot
 A lightweight conversational assistant built with Ruby, Sinatra, and SQLite3 for student expense tracking and budgeting.
 
