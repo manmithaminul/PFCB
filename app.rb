@@ -212,15 +212,16 @@ class FinanceEngine
                 advice = if exp > (needs_target + wants_target)
                            'Action to take: You have spent more than 80% of your earnings. Reduce discretionary spending to preserve your 20% savings.'
                          else
-                           'Budget health is good: You are within target. Aim to allocate at least 20% into savings.'
-                         end
-
+                           'Budget health is good: You are within target. Aim to allocate at least 20% into savings.'                      
+                         end                        
+                         
                 "Budget Plan (50/30/20 Targets):\n" \
                 "• 50% Needs Limit:    $#{format('%.2f', needs_target)}\n" \
                 "• 30% Wants Limit:    $#{format('%.2f', wants_target)}\n" \
                 "• 20% Savings Target: $#{format('%.2f', savings_target)}\n" \
                 "Total Spent So Far:   $#{format('%.2f', exp)}\n\n" \
-                "Suggested Changes:\n#{advice}"
+                "Suggested Changes:\n#{advice}" \
+                "\n\nType \"clear\" to start with a fresh balance."
               end
 
               when /\A(reset|clear)\z/i
